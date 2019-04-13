@@ -1,11 +1,12 @@
-import autobind from 'autobind-decorator';
-import ADChain from './ADChain';
-import ADResponse from './ADResponse';
-import ADRequest from './ADRequest';
-import ADClient from './ADClient';
-import ADLogger from 'ad-logger'
-import ADHttpInterceptor from './interceptors/ADHttpInterceptor';
-import ADHttpError from './error/ADHttpError';
+import autobind from "autobind-decorator";
+import ADChain from "./ADChain";
+import ADResponse from "./ADResponse";
+import ADRequest from "./ADRequest";
+import ADClient from "./ADClient";
+import ADLogger from "ad-logger"
+import ADHttpInterceptor from "./interceptors/ADHttpInterceptor";
+import ADHttpError from "./error/ADHttpError";
+import ADNormalClient from "./ADNormalClient";
 
 
 @autobind
@@ -15,7 +16,7 @@ export default class ADRest<BaseResponse> {
 
     protected _client: ADClient;
 
-    constructor(client: ADClient) {
+    constructor(client: ADClient = new ADNormalClient()) {
         this._client = client
     }
 
@@ -29,7 +30,7 @@ export default class ADRest<BaseResponse> {
             try {
                 return await this._client.fetch<R>(request);
             } catch (e) {
-                throw new ADHttpError('An error occurred in HttpClient fetch method.\n' + e);
+                throw new ADHttpError("An error occurred in HttpClient fetch method.\n" + e);
             }
         }
 
@@ -47,25 +48,25 @@ export default class ADRest<BaseResponse> {
         // consoleIntent(index*4)
         // log(`${index+1} ${request.url} start`)
         let name = (i.name || i.constructor.name);
-        if (!name || name === 'Object')
+        if (!name || name === "Object")
             name = `Interceptor[${index}]`;
 
         let response: ADResponse<R> | undefined;
         if (!i.intercept) {
-            ADLogger.error(name + ' was ignored because dont have `intercept` method.');
+            ADLogger.error(name + " was ignored because dont have `intercept` method.");
         } else {
-            ADLogger.info(name + ' processing...');
+            ADLogger.info(name + " processing...");
             try {
                 if (i.enabled !== false) {
                     let result = i.intercept(chain);
                     response = (result instanceof Promise ? await result : result) as ADResponse<R>;
-                    ADLogger.info(name + ' process done.');
+                    ADLogger.info(name + " process done.");
                 } else {
-                    ADLogger.info(name + ' disabled.');
+                    ADLogger.info(name + " disabled.");
                 }
             } catch (e) {
                 if (!(e instanceof ADHttpError))
-                    ADLogger.error('An error occurred in ' + name + ' interceptor.');
+                    ADLogger.error("An error occurred in " + name + " interceptor.");
                 throw e;
             }
         }

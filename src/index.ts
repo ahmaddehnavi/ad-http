@@ -14,4 +14,4 @@ export {default as BaseUrlHttpInterceptor}from './interceptors/ADBaseUrlHttpInte
 
 import Rest from './ADRest';
 
-export default Rest;
+export default new Rest();
