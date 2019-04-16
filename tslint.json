@@ -4,7 +4,7 @@
   ],
   "rules": {
     "triple-equals": true,
-    "quotemark": true,
+    "quotemark": false,
     "no-unused-variable": false,
     "no-unused-expression": false
   }
