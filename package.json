@@ -1,8 +1,8 @@
 {
-  "name": "ad-logger",
-  "version": "0.0.10",
-  "description": "Another simple js logger library.",
-  "repository": "https://github.com/ahmaddehnavi/ad-logger.git",
+  "name": "ad-http",
+  "version": "0.0.2",
+  "description": "Another Rest JS Library.",
+  "repository": "https://github.com/ahmaddehnavi/ad-http.git",
   "main": "build/index.js",
   "types": "build/index.d.ts",
   "files": [
@@ -12,7 +12,7 @@
   "license": "MIT",
   "private": false,
   "dependencies": {
-    "ad-logger": "latest",
+    "ad-logger": "0.0.10",
     "autobind-decorator": "^2.4.0",
     "form-data": "^2.3.3",
     "mobx": "^5.9.0",
