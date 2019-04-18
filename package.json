@@ -12,7 +12,9 @@
   "license": "MIT",
   "private": false,
   "scripts": {
-    "start": "tsc -w"
+    "start": "tsc -w",
+    "build": "tsc",
+    "test": "jest"
   },
   "dependencies": {
     "ad-logger": "0.0.10",
