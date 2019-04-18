@@ -1,4 +1,5 @@
 #ad-http
+[![Build Status](https://travis-ci.com/ahmaddehnavi/ad-http.svg?branch=master)](https://travis-ci.com/ahmaddehnavi/ad-http)
 
 #Install :
 ```
