@@ -1,6 +1,6 @@
 {
   "name": "ad-http",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Another Rest JS Library.",
   "repository": "https://github.com/ahmaddehnavi/ad-http.git",
   "main": "build/index.js",
