@@ -13,35 +13,39 @@ export type ADRequestHeaders = { [key: string]: ValueOrGenerator<string> };
 export type ADPreparedRequestHeaders = { [key: string]: string };
 export type ADRequestMethod = 'get' | 'GET' | 'post' | 'POST' | 'put' | 'PUT' | 'patch' | 'PATCH' | 'delete' | 'DELETE'
 
-export type ADRequestOptions = {
+export type ADRequestOptions<RequestConfigType = never> = {
     url: string,
     method?: ADRequestMethod,
     params?: ADRequestParams,
     data?: ADRequestData,
     files?: ADRequestFiles,
     headers?: ADRequestHeaders
+    config?: RequestConfigType
 }
 
+export type DefaultRequestConfigType = { [key: string]: any }
 
-class Builder {
+class Builder<RequestConfigType = DefaultRequestConfigType> {
     private _url?: string;
     private _method?: ADRequestMethod;
     private _params?: ADRequestParams;
     private _data?: ADRequestData;
     private _files?: ADRequestFiles;
     private _headers?: ADRequestHeaders;
+    private _config?: RequestConfigType;
 
-    constructor(p: Partial<ADRequest> = {}) {
+    constructor(p: Partial<ADRequest<RequestConfigType>> = {}) {
         this._url = p.url;
         this._method = p.method;
         this._params = p.params;
         this._data = p.data;
         this._files = p.files;
-        this._headers = p.headers
+        this._headers = p.headers;
+        this._config = p.config
     }
 
-    static from(p: ADRequest) {
-        return new ADRequest.Builder(p);
+    static from<ConfigType>(p: ADRequest<ConfigType>) {
+        return new ADRequest.Builder<ConfigType>(p);
     }
 
     url(value: string) {
@@ -114,31 +118,62 @@ class Builder {
 }
 
 @autobind
-export default class ADRequest {
-    public static Builder = Builder
-    public readonly url: string;
-    public readonly method: ADRequestMethod;
-    public readonly params: ADRequestParams;
-    public readonly data: ADRequestData;
-    public readonly files: ADRequestFiles;
-    public readonly headers: ADRequestHeaders;
-    private readonly _options: ADRequestOptions;
+export default class ADRequest<RequestConfigType = DefaultRequestConfigType> {
+    public static Builder = Builder;
+    private readonly _options: ADRequestOptions<RequestConfigType>;
 
-    constructor(p: ADRequestOptions) {
+    constructor(p: ADRequestOptions<RequestConfigType>) {
         this._options = p;
-        this.url = p.url;
-        this.method = p.method || 'get';
-        this.params = {...p.params || {}};
-        this.data = {...p.data || {}};
-        this.files = {...p.files || {}};
-        this.headers = {...p.headers || {}}
     }
 
-    edit(): Builder {
+    public get url() {
+        return this._options.url || ''
+    }
+
+    public get method() {
+        return this._options.method
+    }
+
+    public get params() {
+        return this._options.params || {}
+    }
+
+    public get data() {
+        return this._options.data || {}
+    }
+
+    public get files() {
+        return this._options.files || {}
+    }
+
+    public get headers() {
+        return this._options.headers || {}
+    }
+
+    public get config() {
+        return this._options.config
+    }
+
+    public static post = (url: string, data?: ADRequestData) => {
+        return new ADRequest({url, data, method: 'post'});
+    };
+
+    public static get = (url: string, data?: ADRequestData) => {
+        return new ADRequest({url, data, method: 'get'})
+    };
+
+    edit(): Builder<RequestConfigType> {
         return ADRequest.Builder.from(this);
     }
 
-    clone(): ADRequest {
-        return new ADRequest(this._options);
+    clone(): ADRequest<RequestConfigType> {
+        return new ADRequest({
+            url: this.url,
+            method: this.method,
+            params: {...this.params},
+            data: {...this.data},
+            files: {...this.files},
+            headers: {...this.headers}
+        });
     }
 }

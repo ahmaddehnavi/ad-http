@@ -24,7 +24,7 @@ export default class ADPrepareRequestInterceptor
         })
     }
 
-    async intercept<T>(chain: Chain<T>): Promise<ADResponse<T>> {
+    async intercept<T>(chain: Chain<T, any>): Promise<ADResponse<T>> {
         let req = chain.request
             .edit();
         if (chain.request.data)
@@ -34,7 +34,7 @@ export default class ADPrepareRequestInterceptor
         if (chain.request.headers)
             req.headers(await this.mapAll(chain.request.headers));
         if (chain.request.files)
-            req.files(await this.mapAll(chain.request.files));
+            req.files(await this.mapAll(chain.request.files, {mapObject: false}));
 
         return await chain.proceed(req.build());
     }
@@ -64,10 +64,11 @@ export default class ADPrepareRequestInterceptor
         return value.call(null);
     }
 
-    protected async mapAll<T extends (ADRequestData | ADRequestHeaders | ADRequestFiles)>(data: T): Promise<T> {
+    protected async mapAll<T extends (
+        ADRequestData | ADRequestHeaders | ADRequestFiles)>(data: T, p: { mapObject?: boolean } = {}): Promise<T> {
         for (let key in data) {
             let value: any = data[key];
-            value = this.mapValue(value);
+            value = this.mapValue(value, p);
             if (
                 (value === undefined && this.options.removeUndefined) ||
                 (value === null && this.options.removeNull)
@@ -79,7 +80,7 @@ export default class ADPrepareRequestInterceptor
         return data;
     }
 
-    protected async mapValue(value: any): Promise<any> {
+    protected async mapValue(value: any, {mapObject = true} = {mapObject}): Promise<any> {
         let type = typeof value;
         if (type === 'boolean') {
             value = this.mapBoolean(value);
@@ -88,7 +89,8 @@ export default class ADPrepareRequestInterceptor
         } else if (type === 'string') {
             value = this.mapString(value)
         } else if (type === 'object') {
-            value = this.mapObject(value)
+            if (mapObject)
+                value = this.mapObject(value)
         } else if (type === 'function') {
             value = this.mapFunction(value)
         } else

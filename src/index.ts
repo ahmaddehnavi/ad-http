@@ -1,17 +1,67 @@
-export {default as Request}from './ADRequest';
-export {default as Response}from './ADResponse';
-export {default as NormalClient}from './ADNormalClient';
-export {default as Rest}from './ADRest';
-export {default as Client}from './ADClient';
-export {default as Chain}from './ADChain';
-export {default as HttpError}from './error/ADHttpError';
-export {default as StatusError}from './error/ADStatusError';
-export {default as HttpInterceptor}from './interceptors/ADHttpInterceptor';
-export {default as BaseHttpInterceptor}from './interceptors/ADBaseHttpInterceptor';
-export {default as PrepareRequestInterceptor}from './interceptors/ADPrepareRequestInterceptor';
-export {default as StatusCheckerHttpInterceptor}from './interceptors/ADStatusCheckerHttpInterceptor';
-export {default as BaseUrlHttpInterceptor}from './interceptors/ADBaseUrlHttpInterceptor';
+import ADRest from './ADRest';
+import ADFetchClient from './ADFetchClient';
 
-import Rest from './ADRest';
+export {default as ADRequest}from './ADRequest';
 
-export default new Rest();
+export {
+    default as ADResponse
+}from './ADResponse';
+
+export {
+    default as ADFetchClient
+}from './ADFetchClient';
+
+export {
+    default as Rest,
+    default as ADRest
+}from './ADRest';
+
+export {
+    default as Client,
+    default as ADClient,
+}from './ADClient';
+
+export {
+    default as Chain,
+    default as ADChain
+}from './ADChain';
+
+export {
+    default as HttpError,
+    default as ADHttpError
+}from './error/ADHttpError';
+
+export {
+    default as StatusError,
+    default as ADStatusError
+}from './error/ADStatusError';
+
+export {
+    default as HttpInterceptor,
+    default as ADHttpInterceptor
+}from './interceptors/ADHttpInterceptor';
+
+export {
+    default as BaseHttpInterceptor,
+    default as ADBaseHttpInterceptor
+}from './interceptors/ADBaseHttpInterceptor';
+
+export {
+    default as PrepareRequestInterceptor,
+    default as ADPrepareRequestInterceptor
+}from './interceptors/ADPrepareRequestInterceptor';
+
+export {
+    default as StatusCheckerHttpInterceptor,
+    default as ADStatusCheckerHttpInterceptor
+}from './interceptors/ADStatusCheckerHttpInterceptor';
+
+export {
+    default as BaseUrlHttpInterceptor,
+    default as ADBaseUrlHttpInterceptor
+}from './interceptors/ADBaseUrlHttpInterceptor';
+
+//@ts-ignore
+const gl = global || window || {};
+const ADHttp: ADRest<Response> = gl['ad-http-default-rest'] || new ADRest<Response>(new ADFetchClient());
+export default ADHttp;

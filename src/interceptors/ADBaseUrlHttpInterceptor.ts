@@ -15,7 +15,7 @@ export default class ADBaseUrlHttpInterceptor
             this.options.baseUrl = this.options.baseUrl + '/';
     }
 
-    async intercept<T>(chain: Chain<T>): Promise<ADResponse<T>> {
+    async intercept<T>(chain: Chain<T, any>): Promise<ADResponse<T>> {
 
         if (!chain.request.url.includes('://')) {
             let url = chain.request.url;

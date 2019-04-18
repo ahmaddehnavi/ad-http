@@ -1,8 +1,8 @@
 import autobind from 'autobind-decorator';
-import ADClient from './ADClient';
 import ADResponse from './ADResponse';
 import ADLogger from 'ad-logger'
-import ADRequest from "./ADRequest";
+import ADRequest, {DefaultRequestConfigType} from "./ADRequest";
+import {ADClientClass} from "./ADClient";
 
 let customFetch;
 try {
@@ -22,15 +22,27 @@ try {
 type  Fetch = (input: RequestInfo, init?: RequestInit) => Promise<Response>;
 
 @autobind
-export default class NormalClient implements ADClient {
+export default class ADFetchClient<RequestConfigType = DefaultRequestConfigType>
+    implements ADClientClass<Response, RequestConfigType> {
     // @ts-ignore
     customFetch: Fetch = global.fetch || customFetch;
 
-    async fetch<T>(req: ADRequest): Promise<ADResponse<T>> {
+    async fetch(req: ADRequest): Promise<ADResponse<Response>> {
 
-        let method = req.method.toLowerCase();
+
         let body: any;
         let dataAndFiles = {...req.data, ...req.files};
+
+        let method;
+        if (req.method)
+            method = req.method.toLowerCase();
+        else if (Object.keys(dataAndFiles).length > 0) {
+            method = 'post'
+        } else {
+            method = 'get'
+        }
+
+
         if (method !== 'get') {
             body = new FormData();
             let keys = Object.keys(dataAndFiles);
@@ -66,7 +78,7 @@ export default class NormalClient implements ADClient {
 
         ADLogger.debug(`${req.method} ${endpoint}`);
         let response = await this.customFetch(endpoint, {
-            method: req.method,
+            method: method,
             body: body,
             headers: req.headers as any
         });
@@ -76,7 +88,7 @@ export default class NormalClient implements ADClient {
             headers[key] = value;
         });
 
-        return new ADResponse({
+        return new ADResponse<Response>({
             body: response,
             statusText: response.statusText,
             status: response.status,

@@ -1,13 +1,14 @@
 import Chain from '../ADChain';
 import ADResponse from "../ADResponse";
 
-export type ADHttpInterceptorInterceptReturn<T> = ADResponse<T> |
-    Promise<ADResponse<T>> |
+export type ADHttpInterceptorInterceptReturn<ResponseBodyType> = ADResponse<ResponseBodyType> |
+    Promise<ADResponse<ResponseBodyType>> |
     void |
     Promise<void>
-export default interface ADHttpInterceptor<Base = any> {
+
+export default interface ADHttpInterceptor<ResponseBodyType = any, RequestConfigType = never> {
     enabled?: boolean
     name?: string
 
-    intercept<T>(chain: Chain<Base & T>): ADHttpInterceptorInterceptReturn<Base & T>
+    intercept(chain: Chain<ResponseBodyType, RequestConfigType>): ADHttpInterceptorInterceptReturn<ResponseBodyType>
 }

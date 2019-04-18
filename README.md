@@ -7,22 +7,17 @@ yarn add ad-http
 
 #Simple Usage
 ```typescript
-import ADRest, {Request} from 'ad-http'
+import ADHttp, {Request} from 'ad-http'
 
-let url = 'https://jsonplaceholder.typicode.com/todos';
-let req=new Request.Builder()
-                   .url(url)
-                   .build()
-ADRest.process(req)
-    .then(response=>{
-        response.json()
-            .then(body=>{
-               console.log(body);
-            })
-    })
-    .catch(error=>{
-        console.error(error)
-    })
+ ADHttp.process('https://jsonplaceholder.typicode.com/todos/1')
+        .then(response => response.body())
+        .then(body => body.json())
+        .then(json => {
+            console.log(json)
+        })
+        .catch(error=>{
+            console.error(error)
+        })
 ```
 #Advanced Usage
 **import**
@@ -94,7 +89,8 @@ rest.process(request)
     .then(async (response) => {
        console.log('Status : ',response.status);
        console.log('Headers : ',response.headers);
-       let model=await response.json();
+       let body=await response.body();
+       let model=await body.json();
        console.log(model);
     })
     .catch((e) => {

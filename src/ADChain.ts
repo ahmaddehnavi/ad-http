@@ -1,26 +1,32 @@
 import autobind from 'autobind-decorator';
-import ADResponse from './ADResponse';
-import ADRequest from './ADRequest';
+import ADResponse, {IADResponse} from './ADResponse';
+import ADRequest, {DefaultRequestConfigType} from './ADRequest';
 
-export type Fetch<T> = (request: ADRequest, index: number) => Promise<ADResponse<T>>
+export type Fetch<ResBody, ReqConfig = DefaultRequestConfigType> = (request: ADRequest<ReqConfig>, index: number) =>
+    Promise<ADResponse<ResBody>>
 
 @autobind
-export default class Chain<T> {
-    protected _fetch: Fetch<T>;
-    protected _originalRequest: ADRequest;
+export default class Chain<ResponseBodyType, RequestConfigType = DefaultRequestConfigType> {
+    protected _fetch: Fetch<ResponseBodyType, RequestConfigType>;
+    protected _originalRequest: ADRequest<RequestConfigType>;
     protected _index: number;
-    private _lastResponse?: ADResponse<T>;
+    private _lastResponse?: ADResponse<ResponseBodyType>;
 
-    constructor(p: { originalRequest: ADRequest, request: ADRequest, index: number, fetch: Fetch<T> }) {
+    constructor(p: {
+        originalRequest: ADRequest<RequestConfigType>,
+        request: ADRequest<RequestConfigType>,
+        index: number,
+        fetch: Fetch<ResponseBodyType, RequestConfigType>
+    }) {
         this._fetch = p.fetch;
         this._request = p.request;
         this._originalRequest = p.originalRequest;
         this._index = p.index;
     }
 
-    protected _request: ADRequest;
+    protected _request: ADRequest<RequestConfigType>;
 
-    get request(): ADRequest {
+    get request(): ADRequest<RequestConfigType> {
         return this._request
     }
 
@@ -28,7 +34,8 @@ export default class Chain<T> {
         return this._lastResponse
     }
 
-    async proceed(req: ADRequest = this.request): Promise<ADResponse<T>> {
+    async proceed(req: ADRequest<RequestConfigType> = this.request):
+        Promise<ADResponse<ResponseBodyType>> {
         this._lastResponse = await this._fetch(req, this._index + 1);
         return this._lastResponse
     }

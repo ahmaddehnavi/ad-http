@@ -1,6 +1,14 @@
-import ADResponse from './ADResponse';
+import ADResponse, {IADResponse} from './ADResponse';
 import ADRequest from './ADRequest';
 
-export default interface Client {
-    fetch<T>(request: Readonly<ADRequest>): Promise<ADResponse<T>>
+export type ADClientResponseType<ResponseBodyType> = Promise<IADResponse<ResponseBodyType>>
+
+export interface ADClientClass<ResponseBodyType, RequestConfigType> {
+    fetch(request: ADRequest<RequestConfigType>): ADClientResponseType<ResponseBodyType>
 }
+
+export type  ADClientFunction<ResponseBodyType, RequestConfigType> =
+    ((req: ADRequest<RequestConfigType>) => ADClientResponseType<ResponseBodyType>)
+
+export type ADClient<ResponseBodyType, RequestConfigType> = ADClientFunction<ResponseBodyType, RequestConfigType> |
+    ADClientClass<ResponseBodyType, RequestConfigType>

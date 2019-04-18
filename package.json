@@ -11,6 +11,9 @@
   "author": "Ahmad Dehnavi",
   "license": "MIT",
   "private": false,
+  "scripts": {
+    "start": "tsc -w"
+  },
   "dependencies": {
     "ad-logger": "0.0.10",
     "autobind-decorator": "^2.4.0",
